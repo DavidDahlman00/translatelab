@@ -42,21 +42,23 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.mlkit.codelab.translate.R
 import com.google.mlkit.codelab.translate.analyzer.TextAnalyzer
+import com.google.mlkit.codelab.translate.classes.TranslateItem
 import com.google.mlkit.codelab.translate.util.Language
 import com.google.mlkit.codelab.translate.util.ScopedExecutor
 import kotlinx.android.synthetic.main.main_fragment.*
 import kotlinx.android.synthetic.main.main_fragment.view.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.concurrent.fixedRateTimer
 import kotlin.math.abs
 import kotlin.math.ln
 import kotlin.math.max
 import kotlin.math.min
 
-class MainFragment : Fragment() {
+class MainFragment(viewModel: MainViewModel) : Fragment() {
 
     companion object {
-        fun newInstance() = MainFragment()
+        fun newInstance(viewModel: MainViewModel) = MainFragment(viewModel)
 
         // We only need to analyze the part of the image that has text, so we set crop percentages
         // to avoid analyze the entire image from the live camera feed.
@@ -76,13 +78,15 @@ class MainFragment : Fragment() {
     }
 
     private var displayId: Int = -1
-    private val viewModel: MainViewModel by viewModels()
+    //private val viewModel: MainViewModel by viewModels()
+    private val viewModel = viewModel
     private var cameraProvider: ProcessCameraProvider? = null
     private var camera: Camera? = null
     private var imageAnalyzer: ImageAnalysis? = null
     private lateinit var container: ConstraintLayout
     private lateinit var viewFinder: PreviewView
-
+    private var tmpTextToTranslate = ""
+    val mainBottomSheetFragment = MainBottomSheetFragment(this, viewModel)
     /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
 
@@ -113,13 +117,31 @@ class MainFragment : Fragment() {
         // Initialize our background executor
         cameraExecutor = Executors.newSingleThreadExecutor()
         scopedExecutor = ScopedExecutor(cameraExecutor)
+
+        viewModel.translatedText.observe(viewLifecycleOwner, Observer { resultOrError ->
+            resultOrError?.let {
+                if (it.error != null) {
+                    val translatResult = resultOrError.error?.localizedMessage.toString()
+                    tmpTextToTranslate = translatResult
+                } else {
+                    val  translatResult = resultOrError.result.toString()
+                    tmpTextToTranslate = translatResult
+                }
+            }
+        })
+
         save.setOnClickListener {
-            val translatResult = viewModel.translatedText.value
-            Log.d("testtext1", viewModel.sourceText.value.toString())
-            Log.d("testlang1", viewModel.sourceLang.value.toString())
-            Log.d("testtext2", translatResult?.result.toString())
-            Log.d("testlang2", viewModel.targetLang.value.toString())
+            val text1 = viewModel.sourceText.value.toString()
+            val lang1 = viewModel.sourceLang.value.toString()
+            val langResult = viewModel.targetLang.value.toString()
+            val translateItem = TranslateItem(text1, lang1, tmpTextToTranslate, langResult)
+            viewModel.addTranslateItem(translateItem)
         }
+
+        floatingActionButton.setOnClickListener {
+            fragmentManager?.let { it -> mainBottomSheetFragment.show(it, "mainBottomSheet") }
+        }
+
         // Request camera permissions
         if (allPermissionsGranted()) {
             // Wait for the views to be properly laid out

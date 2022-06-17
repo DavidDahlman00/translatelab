@@ -20,9 +20,16 @@ package com.google.mlkit.codelab.translate
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.mlkit.codelab.translate.main.MainAdapter
 import com.google.mlkit.codelab.translate.main.MainFragment
+import com.google.mlkit.codelab.translate.main.MainViewModel
 import kotlinx.android.synthetic.main.main_activity.*
+import kotlinx.android.synthetic.main.main_activity.view.*
+import kotlinx.android.synthetic.main.nav_header.view.*
 
 class MainActivity : AppCompatActivity() {
 //https://www.youtube.com/watch?v=do4vb0MdLFY
@@ -35,9 +42,10 @@ class MainActivity : AppCompatActivity() {
     android:layout_height="match_parent"
     tools:context=".MainActivity" />
     */
-
+    //private lateinit var recyclerView: RecyclerView
+    //private var adapter : RecyclerView.Adapter<MainAdapter.ViewHolder>? = null
     lateinit var toggle: ActionBarDrawerToggle
-
+    private val viewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
@@ -45,16 +53,22 @@ class MainActivity : AppCompatActivity() {
         toggle = ActionBarDrawerToggle(this, drawerActivity, R.string.open, R.string.close)
         drawerActivity.addDrawerListener(toggle)
         toggle.syncState()
-        //supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, MainFragment.newInstance())
+                .replace(R.id.container, MainFragment.newInstance(viewModel))
                 .commitNow()
         }
+      /*  recyclerView = naveView.inflateHeaderView(R.layout.nav_header).myrecyclerview
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter = MainAdapter(viewModel)
+        recyclerView.adapter = adapter
+        recyclerView.adapter!!.notifyDataSetChanged()*/
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(toggle.onOptionsItemSelected(item)){
+
             return true
         }
         return super.onOptionsItemSelected(item)

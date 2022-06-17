@@ -27,6 +27,7 @@ import androidx.lifecycle.Transformations
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.mlkit.codelab.translate.classes.TranslateItem
 import com.google.mlkit.codelab.translate.util.Language
 import com.google.mlkit.codelab.translate.util.ResultOrError
 import com.google.mlkit.codelab.translate.util.SmoothedMutableLiveData
@@ -37,12 +38,10 @@ import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
 import com.google.mlkit.codelab.translate.main.MainFragment.Companion.DESIRED_HEIGHT_CROP_PERCENT
 import com.google.mlkit.codelab.translate.main.MainFragment.Companion.DESIRED_WIDTH_CROP_PERCENT
-import com.google.mlkit.nl.languageid.LanguageIdentifier
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import java.text.FieldPosition
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    // TODO Instantiate LanguageIdentification
     private val languageIdentifier = LanguageIdentification.getClient()       //(TextRecognizerOptions.DEFAULT_OPTIONS)
     val targetLang = MutableLiveData<Language>()
     val sourceText = SmoothedMutableLiveData<String>(SMOOTHING_DURATION)
@@ -56,8 +55,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val translatedText = MediatorLiveData<ResultOrError>()
     private val translating = MutableLiveData<Boolean>()
     val modelDownloading = SmoothedMutableLiveData<Boolean>(SMOOTHING_DURATION)
-
+    val tanslatedList = MutableLiveData<MutableList<TranslateItem>>()
     private var modelDownloadTask: Task<Void> = Tasks.forCanceled()
+
+    init {
+        tanslatedList.value = ArrayList()
+    }
 
     private val translators =
         object : LruCache<TranslatorOptions, Translator>(NUM_TRANSLATORS) {
@@ -85,9 +88,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         result
     }
 
+
     override fun onCleared() {
         languageIdentifier.close()
         translators.evictAll()
+    }
+
+    fun addTranslateItem(translateItem: TranslateItem) {
+        tanslatedList.value?.add(translateItem)
+        tanslatedList.value = tanslatedList.value
+    }
+
+    fun removeTranslateItem(position: Int) {
+        tanslatedList.value?.removeAt(position)
     }
 
     private fun translate(): Task<String> {
@@ -156,5 +169,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         private const val SMOOTHING_DURATION = 50L
 
         private const val NUM_TRANSLATORS = 1
+       // val tanslatedList = MutableLiveData<MutableList<TranslateItem>>()
     }
 }
