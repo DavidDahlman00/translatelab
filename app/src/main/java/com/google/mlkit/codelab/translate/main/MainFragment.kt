@@ -24,10 +24,7 @@ import android.icu.lang.UCharacter.GraphemeClusterBreak.L
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.SurfaceHolder
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -130,7 +127,22 @@ class MainFragment(viewModel: MainViewModel) : Fragment() {
             }
         })
 
+        save.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    v.background.setColorFilter(-0x1f0b8adf, PorterDuff.Mode.SRC_ATOP)
+                    v.invalidate()
+                }
+                MotionEvent.ACTION_UP -> {
+                    v.background.clearColorFilter()
+                    v.invalidate()
+                }
+            }
+            false
+        }
+
         save.setOnClickListener {
+
             val text1 = viewModel.sourceText.value.toString()
             val lang1 = viewModel.sourceLang.value.toString()
             val langResult = viewModel.targetLang.value.toString()
