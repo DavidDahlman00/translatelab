@@ -10,6 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.mlkit.codelab.translate.R
 import com.google.mlkit.codelab.translate.databinding.FragmentMainBottomSheetBinding
 import androidx.lifecycle.Observer
+import com.google.mlkit.codelab.translate.data.TranslateList
 
 
 class MainBottomSheetFragment(fragment: MainFragment, viewModel: MainViewModel) : BottomSheetDialogFragment() {
@@ -37,7 +38,6 @@ class MainBottomSheetFragment(fragment: MainFragment, viewModel: MainViewModel) 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = MainAdapter(viewModel, this)
         recyclerView.adapter = adapter
-        viewModel.tanslatedList.observe(viewLifecycleOwner, Observer { recyclerView.adapter?.notifyDataSetChanged()})
         recyclerView.adapter?.notifyDataSetChanged()
         return view
     }

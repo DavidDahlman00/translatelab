@@ -40,6 +40,7 @@ import androidx.lifecycle.Observer
 import com.google.mlkit.codelab.translate.R
 import com.google.mlkit.codelab.translate.analyzer.TextAnalyzer
 import com.google.mlkit.codelab.translate.classes.TranslateItem
+import com.google.mlkit.codelab.translate.data.TranslateList
 import com.google.mlkit.codelab.translate.util.Language
 import com.google.mlkit.codelab.translate.util.ScopedExecutor
 import kotlinx.android.synthetic.main.main_fragment.*
@@ -147,7 +148,8 @@ class MainFragment(viewModel: MainViewModel) : Fragment() {
             val lang1 = viewModel.sourceLang.value.toString()
             val langResult = viewModel.targetLang.value.toString()
             val translateItem = TranslateItem(text1, lang1, tmpTextToTranslate, langResult)
-            viewModel.addTranslateItem(translateItem)
+           // viewModel.addTranslateItem(translateItem)
+            TranslateList.add(translateItem)
         }
 
         floatingActionButton.setOnClickListener {
