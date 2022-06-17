@@ -5,18 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+    <ImageButton
         android:id="@+id/list_item_remove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
+        android:background="@color/colorWhite"
         android:contentDescription="@string/list_item_remove"
         android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_outline_remove_circle_24"
-        android:focusable="true" />
+        app:srcCompat="@drawable/ic_baseline_remove_circle_outline_24"
+        android:focusable="true"  />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -31,9 +33,20 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/list_item_text1"
+            android:id="@+id/textlang"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="TextView"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/list_item_text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:foregroundGravity="clip_horizontal"
             android:gravity="center"
             android:text="TextView"
             android:textStyle="bold" />
@@ -46,5 +59,6 @@
             android:text="TextView"
             android:textColor="@color/colorAccent"
             android:textStyle="bold" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

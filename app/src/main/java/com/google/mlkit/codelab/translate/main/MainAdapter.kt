@@ -26,6 +26,8 @@ class MainAdapter(viewModel: MainViewModel, mainBottomSheetFragment: MainBottomS
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Log.d("test recycler", "test")
         holder.itemView.also {
+            val lang = "${TranslateList.list[position].langToTranslate} / ${TranslateList.list[position].langTranslatedTo}"
+            it.textlang.text = lang
             it.list_item_text1.text =
                 //viewModel.tanslatedList.value?.get(position)?.textToTranslate ?: "error"
                 TranslateList.list[position].textToTranslate
